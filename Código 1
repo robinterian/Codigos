@@ -1,0 +1,467 @@
+#include <stdio.h>
+//#include <conio.h> conio  tiene problemas en dev c++
+#include <windows.h> // mejor usamos windows
+#include <string.h>
+#include <stdlib.h>
+
+
+HANDLE hStdout; // para windows.h
+
+struct datos_clientes
+	{
+	char clave[4];
+	char nombre[40];
+	char calle[50];
+	char colonia[40];
+	char telefono[11];
+	}clientes;
+
+struct datos_productos
+	{
+	char clave[4];
+	char producto[20];
+	char descripcion[40];
+	char precio[10];
+	}productos;
+
+struct datos_factura
+	{
+	char clave[4];
+	char fecha[15];
+	char clave_cliente[4];
+	char clave_producto[4];
+	char cantidad[5];
+	}facturas;
+
+
+
+
+int main()
+	{
+	int opcion=9;
+	int cantidadprod;
+	char opcion_seg[2];
+	char clavebuscar[4];
+	FILE *archivo, *auxiliar;
+	float precioprod;
+	char variablecomp;
+	int cont;
+	float totalpagar;
+
+	if((archivo=fopen("c:datoscli.txt","a+b"))==NULL)
+		{
+		//textattr(279); esto es de conio.h
+		SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY); // esto es para windows.h
+		
+		printf("\ntno se puede abrir el archivo"); // printf en lugar de cprintf
+		// getch(); no funciona en dev c++
+        system("pause");
+		exit(1);
+		}
+	if((auxiliar=fopen("c:borrador.txt","a+b"))==NULL)
+		{
+		// textattr(279);
+		SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+		printf("\n\tno se puede abrir el archivo");
+		//getch();
+		system("pause");
+		exit(1);
+		}
+	do
+		{
+		// textcolor(MAGENTA);
+		SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		//textbackground(GREEN);
+		
+		// clrscr(); No funciona en dev c++
+		system("cls"); // funcion de windows.h
+		
+		printf("\n\t   Tienda Gandhy y Asociados           ");
+		printf("\n\######################################");
+		printf("\n\n 1.- factura de venta");
+		printf("\n\n 2.- ingresar nuevo producto");
+		printf("\n\n 3.- ingresar nuevo cliente");
+		printf("\n\n 4.- buscar factura de una venta");
+		printf("\n\n 5.- Buscar producto");
+		printf("\n\n 6.- buscar cliente");
+		printf("\n\n 7.- Salir");
+		printf("\n\n Opcion : ");
+		gets(opcion_seg);
+		opcion=atoi(opcion_seg);
+		switch(opcion)
+			{
+			case 1:
+				//textattr(168);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+				
+				// clrscr(); No funciona en dev c++
+		        system("cls"); // funcion de windows.h
+		        
+				freopen("c:datosfact.txt","a+b",archivo);
+				printf("\n\tclave de la factura:  ");fflush(stdin);
+				gets(facturas.clave);
+				printf("\n\t fecha: ");fflush(stdin);
+				gets(facturas.fecha);
+				printf("\n\tclave del cliente: ");fflush(stdin);
+				gets(facturas.clave_cliente);
+				freopen("c:datoscli.txt","a+b",archivo);
+				rewind(archivo);
+				variablecomp=fgetc(archivo);
+				fseek(archivo,0L,SEEK_SET);
+				while(variablecomp!=EOF)
+					{
+					if(fread(&clientes,sizeof(clientes),1,archivo)!=1)
+						{
+						printf("\n\t Error al leer producto");
+						//getch();
+		                system("pause");
+						exit(3);
+						}
+
+					if(strcmp(facturas.clave_cliente,clientes.clave)==0)
+						{
+						cont=2;
+						printf("\n\n\t Nombre:  %s",clientes.nombre);
+						}
+					variablecomp=fgetc(archivo);
+					fseek(archivo,0L,SEEK_SET);
+					}
+				if (cont!=2)
+					{
+					printf("\n\n\t Clave del cliente no existe");
+					//getch();
+                    system("pause");
+					}
+				printf("\n\tclave del producto:   ");fflush(stdin);
+				gets(facturas.clave_producto);
+				freopen("c:datosprod.txt","a+b",archivo);
+				rewind(archivo);
+				variablecomp=fgetc(archivo);
+				fseek(archivo,0L,SEEK_SET);
+				while(variablecomp!=EOF)
+					{
+					if(fread(&productos,sizeof(productos),1,archivo)!=1)
+						{
+						printf("\n\t Error al leer producto");
+						//getch();
+		                system("pause");
+						exit(3);
+						}
+
+					if(strcmp(facturas.clave_producto,productos.clave)==0)
+						{
+						cont=2;
+						precioprod=atof(productos.precio);
+						printf("\n\t %s",productos.producto);
+						printf("\n\tprecio :     %s",productos.precio);
+						printf("\n\t cantidad de productos:   ");
+						gets(facturas.cantidad);
+						cantidadprod=atoi(facturas.cantidad);
+						totalpagar=(precioprod)*(cantidadprod);
+						printf("\n\t total a pagar= %f ", totalpagar);
+						//getch();
+		                system("pause");
+						}
+					variablecomp=fgetc(archivo);
+					fseek(archivo,0L,SEEK_SET);
+					}
+				if (cont!=2)
+					{
+					printf("\n\t Clave ingresada no existe");
+					//getch();
+                    system("pause");
+					}
+
+				freopen("c:datosfact.txt","a+b",archivo);
+				if(fwrite(&facturas,sizeof(facturas),1,archivo)!=1)
+					{
+					printf("\n\tError al escribir sobre el archivo");
+					//getch();
+                    system("pause");
+					}
+
+				break;
+
+
+
+			case 2:
+				//textattr(169);
+                //SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+                
+				//clrscr();
+				system("pause");
+				
+				freopen("c:datosprod.txt","a+b",archivo);
+				printf("\n\tingresa clave del producto:   ");fflush(stdin);
+				gets(productos.clave);
+				printf("\n\tingresa nombre del producto:   ");fflush(stdin);
+				gets(productos.producto);
+				printf("\n\tingresa descripcion del producto:   ");fflush(stdin);
+				gets(productos.descripcion);fflush(stdin);
+				printf("\n\tingresa precio:   ");fflush(stdin);
+				gets(productos.precio);
+				if(fwrite(&productos,sizeof(productos),1,archivo)!=1)
+					{
+					printf("Error al escribir sobre el archivo");
+					//getch();
+                    system("pause");
+					}
+				printf("\n\t %s",productos.precio);
+				//getch();
+                system("pause");
+				break;
+
+			case 3:
+
+				//textattr(169);
+                SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//clrscr();
+				system("cls");
+				freopen("c:datoscli.txt","a+b",archivo);
+				printf("\n\tingresa clave del cliente:  ");fflush(stdin);
+				gets(clientes.clave);
+				printf("\n\tingresa nombre: ");fflush(stdin);
+				gets(clientes.nombre);
+				printf("\n\tingresa calle: ");fflush(stdin);
+				gets(clientes.calle);
+				printf("\n\tingresa colonia: ");fflush(stdin);
+				gets(clientes.colonia);
+				printf("\n\tingresa telefono: ");fflush(stdin);
+				gets(clientes.telefono);
+
+				if(fwrite(&clientes,sizeof(clientes),1,archivo)!=1)
+					{
+					printf("\n\tError al escribir sobre el archivo");
+					//getch();
+                    system("pause");
+					exit(2);
+					}
+				break;
+
+			case 4:
+				//textattr(357);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//clrscr();
+				system("cls");
+				freopen("c:datosfact.txt","a+b",archivo);
+				printf("\n\n\tIngresa la clave de la factura");fflush(stdin);
+				scanf("%s", & clavebuscar);
+				rewind(archivo);
+				variablecomp=fgetc(archivo);
+				fseek(archivo,0L,SEEK_SET);
+				while(variablecomp!=EOF)
+					{
+					if(fread(&facturas,sizeof(facturas),1,archivo)!=1)
+						{
+						printf("\n\t Falla al leer factura de venta");
+						//getch();
+                        system("pause");
+						exit(3);
+						}
+
+					if(strcmp(facturas.clave,clavebuscar)==0)
+						{
+						cont=2;
+						printf("\n\t clave: %s", facturas.clave);
+						printf("\n\t fecha: %s", facturas.fecha);
+						freopen("c:datoscli.txt","a+b",auxiliar);
+						rewind(auxiliar);
+						variablecomp=fgetc(auxiliar);
+						fseek(auxiliar,0L,SEEK_SET);
+						while(variablecomp!=EOF)
+							{
+							if(fread(&clientes,sizeof(clientes),1,auxiliar)!=1)
+								{
+								printf("\n\t Error al leer cliente");
+								//getch();
+                                system("pause");
+								exit(3);
+								}
+
+							if(strcmp(facturas.clave_cliente,clientes.clave)==0)
+								{
+								cont=2;
+								printf("\n Nombre: %s",clientes.nombre);
+								}
+							;variablecomp=fgetc(auxiliar);
+							fseek(auxiliar,0L,SEEK_SET);
+							}
+						if (cont!=2)
+							{
+							printf("\n Clave del cliente no existe");
+							//getch();
+                            system("pause");
+							}
+
+						freopen("c:datosprod.txt","a+b",auxiliar);
+						rewind(auxiliar);
+						variablecomp=fgetc(auxiliar);
+						fseek(auxiliar,0L,SEEK_SET);
+						while(variablecomp!=EOF)
+							{
+							if(fread(&productos,sizeof(productos),1,auxiliar)!=1)
+								{
+								printf("\n\t Falla al leer producto");
+								//getch();
+                                system("pause");
+								exit(3);
+								}
+
+							if(strcmp(facturas.clave_producto,productos.clave)==0)
+								{
+								cont=2;
+								printf("\n Producto: %s",productos.producto);
+								printf("\n Precio: %s", productos.precio);
+								precioprod=atof(productos.precio);
+								}
+							variablecomp=fgetc(auxiliar);
+							fseek(auxiliar,0L,SEEK_SET);
+							}
+						if (cont!=2)
+							{
+							printf("\n\n\t Clave del cliente no existe");
+							//getch();
+                            system("pause");
+							}
+
+
+						printf("\n cantidad: %s", facturas.cantidad);
+						cantidadprod=atoi(facturas.cantidad);
+						totalpagar=(precioprod)*(cantidadprod);
+						printf("\n total: %f", totalpagar);
+						//getch();
+                        system("pause");
+						}
+					variablecomp=fgetc(archivo);
+					fseek(archivo,0L,SEEK_SET);
+					}
+				if (cont!=2)
+					{
+					printf("\n\t Clave ingresada no existe");
+					//getch();
+                    system("pause");
+					}
+				break;
+
+
+			case 5:
+				//textattr(158);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//clrscr();
+				system("cls");
+				freopen("c:datosprod.txt","a+b",archivo);
+				printf("\nIngresa la clave del producto: ");fflush(stdin);
+				gets(clavebuscar);
+				rewind(archivo);
+				variablecomp=fgetc(archivo);
+				fseek(archivo,0L,SEEK_SET);
+				while(variablecomp!=EOF)
+					{
+					if(fread(&productos,sizeof(productos),1,archivo)!=1)
+						{
+						printf("\n\t Errror al leer producto");
+						//getch();
+						system("pause");
+						exit(3);
+						}
+
+					if(strcmp(clavebuscar,productos.clave)==0)
+						{
+						cont=2;
+						printf("\n clave: %s",productos.clave);
+						printf("\n producto: %s",productos.producto);
+						printf("\n Dedscripcion: %s",productos.descripcion);
+						printf("\n precio : %s",productos.precio);
+						//getch();
+						system("pause");
+						}
+					variablecomp=fgetc(archivo);
+					fseek(archivo,0L,SEEK_SET);
+					}
+
+				if (cont!=2)
+					{
+					printf("\n\t Clave ingresada no existe");
+					//getch();
+					system("pause");
+					}
+				break;
+			case 6:
+				//textcolor(BLACK);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//textbackground(GREEN);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//clrscr();
+				system("cls");
+				printf("\n\tclave de cliente a buscar: ");fflush(stdin);
+				gets(clavebuscar);
+				freopen("c:datoscli.txt","a+b",archivo);
+				rewind(archivo);
+				variablecomp=fgetc(archivo);
+				fseek(archivo,0L,SEEK_SET);
+				while(variablecomp!=EOF)
+					{
+					if(fread(&clientes,sizeof(clientes),1,archivo)!=1)
+						{
+						printf("\n\t Errror al leer producto");
+						//getch();
+					    system("pause");
+						exit(3);
+						}
+
+					if(strcmp(clavebuscar,clientes.clave)==0)
+						{
+						cont=2;
+						printf("\n\t Clave: %s",clientes.clave);
+						printf("\n\t Nombre:  %s",clientes.nombre);   fflush(stdin);
+						printf("\n\t Calle: %s", clientes.calle);
+						printf("\n\t Colonia: %s",clientes.colonia);
+						printf("\n\t Telefono: %s",clientes.telefono);
+						//getch();
+					    system("pause");
+						}
+					fflush(stdin);variablecomp=fgetc(archivo);
+					fseek(archivo,0L,SEEK_SET);
+					}
+				if (cont!=2)
+					{
+					printf("\n\n\t Clave del cliente no existe");
+					//getch();
+					system("pause");
+					}
+				break;
+
+			case 7:
+				//textcolor(RED);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//textbackground(YELLOW);
+				SetConsoleTextAttribute(hStdout, BACKGROUND_GREEN);
+				printf("\n Para Salir presiones cualquier tecla");
+				//getch();
+				system("pause");
+				break;
+
+			default:
+				//textcolor(RED);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+				//textbackground(BLUE);
+				SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE );
+				printf("\n esta opcion no es valida");
+				//getch();
+				system("pause");
+				break;
+			}
+		}
+		while(opcion!=7);
+	if(fclose(archivo)!=0)
+		{
+		//textcolor(159);
+		SetConsoleTextAttribute(hStdout, FOREGROUND_RED | FOREGROUND_INTENSITY);
+		//textbackground(YELLOW);
+		SetConsoleTextAttribute(hStdout, BACKGROUND_GREEN);
+		printf("\nterror al abrir el archivo");
+		//getch();
+		system("pause");
+		exit(4);
+		}
+	}
