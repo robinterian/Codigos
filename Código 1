@@ -1,3 +1,11 @@
+Comments: Ponerle comentarios al código ya escrito.
+          Hacer modificaciones para que funcione este código.
+          
+
+
+
+
+
 #include <stdio.h>
 //#include <conio.h> conio  tiene problemas en dev c++
 #include <windows.h> // mejor usamos windows
