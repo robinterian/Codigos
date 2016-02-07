@@ -3,7 +3,7 @@
 FILE *arch;
 void main()
 {
-	int isbn, band, resp;
+	int isbn, band, resp; /*band = bandera, si es 0 = false */
 	float pre; /* precio */
 	char tit[50]; /* titulo */
 	arch=fopen("libros.txt", "w"); /* w = crear */
