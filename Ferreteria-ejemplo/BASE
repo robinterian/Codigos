@@ -1,0 +1,92 @@
+#include <stdio.h>
+typedef struct
+{
+	int id;
+	char desc[50];
+	int cant;
+	float pre;
+}   datos;
+    void reporte(datos * art, int i);
+    int nuevos(datos * art, int i);
+    void embarque(datos * art, int i);
+    
+    main()
+{
+	datos art[100]={100,"tornillo", 5000, 0.05, 
+	                200, "clavo", 8000, 0.08,
+					300, "martillo", 1500, 58.7,
+					400, "tuerca", 7800, 0.23,
+					500, "cinta aislar", 560, 25.6};
+					
+	int op, i=5;
+	do
+{
+	 system("cls");
+	 printf("\n\n 1.Nuevos productos");
+	 printf("\n\n 2.Embarques");
+	 printf("\n\n 3.Ventas");
+	 printf("\n\n 4.Reportes");
+	 printf("\n\n 0.Salir");
+	 printf("\n\n \t Opcion--->"); scanf("%d", &op);
+	 switch(op)
+{
+	  case 1: i=nuevos(art,i);
+	  break;
+	  case 2: embarque(art,i);
+	  break;
+	  case 4: reporte(art,i);
+	  break;
+}
+
+}   while(op);
+
+}
+    void reporte(datos * art, int i)
+{
+     int j;
+     system("cls");
+     printf("\n\n\n ID\t Descripcion Cantidad Precio");
+     for(j=0; j<i; j++)
+     printf("\n%d %15s %8d   $%.2f", art[j].id, art[j].desc, art[j].cant, art[j].pre);
+     getche();
+}
+	int nuevos(datos * art, int i)
+{
+	int band;
+	system("cls");
+	do
+{
+	printf("\n Ingresa ID del producto \t"); scanf("%d", &art[i].id);
+	printf("\n Agrega la descripcion del producto \t");
+	fflush(stdin);
+	gets(art[i].desc); /*leer una cadena de caracteres sin espacio*/
+	printf("\n Cantidad \t"); scanf("%d", &art[i].cant);
+	printf("\n Precio \t"); scanf("%f", &art[i].pre);
+	i++;
+	printf("\n Para terminar escribe 0 \t"); scanf("%d", &band); /* band = haz el ciclo mientras band sea 0 */
+}   while(band);
+    return i;
+}
+    void embarque(datos * art, int i)
+{
+	int idBus, j, c, band=0; /* c = cantidad */
+	system("cls");
+	printf("\n ID a buscar \t"); scanf("%d", &idBus);
+	for(j=0; j<i; j++)
+{ /* abre for */
+	if(idBus==art[j].id) /* [] campo / . posicion */
+{ 
+	band=1;
+	printf("\n Ingresa la cantidad del embarque \t"); scanf("%d", &c);
+	art[j] .cant=art[j] .cant + c;
+}
+
+} /*cierra for */
+    if(band==0)
+{
+	printf("\n\n\n ID no existe!");
+	getche(); /* pausa */
+}
+
+}
+	
