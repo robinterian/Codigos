@@ -1,0 +1,21 @@
+#include<stdio.h>
+
+FILE *arch;
+void main()
+{
+	int isbn, band, resp;
+	float pre; /* precio */
+	char tit[50]; /* titulo */
+	arch=fopen("libros.txt", "w"); /* w = crear */
+	do
+	{
+		printf("ISBN del libro \t"); scanf("%d", &isbn);
+		printf("Titulo \t"); fflush(stdin); gets(tit);
+		printf("Precio \t"); scanf("%f", &pre);
+		printf("\n Escribe 0 para salir \t"); scanf("%d", &band);
+		fprintf(arch, "%12d %8f %50s", isbn, pre, tit);
+		if(band!=0)
+		   fprintf(arch, "\n");
+	}while(band);
+	fclose(arch);
+}
