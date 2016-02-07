@@ -1,0 +1,107 @@
+#include<stdio.h>
+
+FILE *arch;
+typedef struct
+{
+	int isbn; /* en el mismo orden que iba la tabla de archivos_2 */
+	float pre;
+	char tit[50];
+}libro;
+int lectura(libro *lib, int i);
+void listado(libro *lib, int i);
+int alta(libro *lib, int i); /* para agregar mas libros */
+void escribe(libro *lib, int i);  /* manda a llamar despues de cerrar el menu */
+int baja(libro *lib, int i);
+main()
+{
+	libro lib[100];
+	int i=0, op;
+	i=lectura(lib, i); /* llamado a lectura */
+	do /* esto se agrego al final */
+	{
+		system("cls");
+		printf("\n1.Altas");
+		printf("\n2.Reportes");
+		printf("\n3.Bajas");
+		printf("\n0.Salir");
+		printf("\nOpcion\t"); scanf("%d", &op);
+		switch(op)
+		{
+			case 1: i=alta(lib,i);
+			break;
+			case 2: listado(lib,i);
+			break;
+			case 3: i=baja(lib,i);
+			break;
+		}
+	}while(op); /* hasta aqui se agrego al final */
+	escribe(lib, i);
+	
+	listado(lib, i); /* llamado a listado, no regresa nada */
+}
+int lectura(libro *lib, int i)
+{
+	char cad[73]="";
+	arch=fopen("libros.txt", "r");
+	fgets(cad,73,arch);
+	while(!feof(arch))
+	{
+		fgets(cad, 73, arch);
+		//printf("%s", cad);
+		sscanf(cad, "%d%f[^\n]", &lib[i].isbn, &lib[i].pre, lib[i].tit);
+		i++; /* al dar la vuelta aumenta las celdas */
+	}
+	return i;
+	fclose(arch);
+	
+}
+void listado(libro *lib, int i)
+{
+	int j;
+	for(j=0; j<i; j++)
+	if(lib[j].isbn!=0) /* es para que no muestre a los de baja en el listado */
+	   printf("\n isbn %d titulo: %s precio $%.2f", lib[j].isbn, lib[j].tit, lib[j].pre);
+	         lib[j].pre;
+	getche();
+}
+int alta(libro *lib, int i)
+{
+	int band;		
+	system("cls");
+	do
+	{
+		printf("ISBN\t"); scanf("%d", &lib[i].isbn);
+		printf("Titulo\t"); fflush(stdin); gets(lib[i].tit);
+		strcat(lib[i].tit, "\n");
+		printf("Precio\t"); scanf("%f", &lib[i].pre);
+		i++;
+		printf("\nPara salir escribe 0\t"); scanf("%d", &band);
+		
+	}while(band);
+	return i; /* para regresar porque se actualiza el arreglo */
+}
+void escribe(libro *lib, int i) /* la rutina de archivos_2 */
+{
+	arch=fopen("libros.txt", "w"); /* w = crear */
+	int j;
+	for(j=0;j<i;j++)
+	{
+	 if(lib[j].isbn!=0) /* si es diferente a 0 lo escribe en el archivo, si no se da de baja y no se escribe */
+		fprintf(arch, "\n %d %10.2f %50s", lib[j].isbn, lib[j].pre, lib[j].tit);////*****
+    }
+fclose(arch);
+}
+int baja(libro *lib, int i)
+{
+	int bus, j;
+	printf("Escribe isbn a dar de baja\t");
+	scanf("%d", &bus);
+	for(j=0;j<i;j++)
+	{
+		if(bus==lib[j].isbn)
+		{
+			lib[j].isbn=0;
+		}
+	}
+	return i;
+}
